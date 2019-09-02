@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/view.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/jquery-upload/css/jquery.fileupload-ui.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/jquery-upload/css/jquery.fileupload.css}"/>
+    <title>用户表单</title>
+</head>
+<body class="layui-view-body">
+<div class="layui-content">
+    <div class="layui-row">
+        <div class="layui-card">
+
+            <div class="layui-card-header">用户<span th:text="${user.id != null ?'编辑' : '新增'}"></span></div>
+                <form id="user-form" class="layui-form layui-card-body" action="#" method="post">
+                    <input type="hidden" name="id" th:value="${user.id}">
+                    <!--用户名-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username" required th:value="${user.username}" lay-verify="required"
+                                   placeholder="username" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <!--密码-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="password" required th:value="${user.password}" lay-verify="required"
+                                   placeholder="password" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="email" required th:value="${user.email}" lay-verify="required"
+                                   placeholder="email" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn layui-btn-blue" onclick="saveuser()">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{/assets/layui.all.js}"></script>
+<script th:src="@{/assets/lay/modules/layui-xtree.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/jquery-upload/vendor/jquery.ui.widget.js}"></script>
+<script type="text/javascript" th:src="@{/assets/jquery-upload/jquery.iframe-transport.js}"></script>
+<script type="text/javascript" th:src=" @{/assets/jquery-upload/jquery.fileupload.js}"></script>
+<!--富文本编辑器wangEditor-->
+<script th:src="@{/assets/wangeditor/wangEditor.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var contextPath = [[${#request.getContextPath()}]]; //获取当前应用路径
+    /*]]>*/
+</script>
+<script>
+    var form = layui.form
+        , layer = layui.layer;
+</script>
+<!--wangEditor 富文本编辑器-->
+<script type="text/javascript">
+    var E = window.wangEditor
+    var editor = new E('#remark')
+    var text_summary = $('#themeDetails')
+    editor.customConfig.onchange = function (html) {
+        // 监控变化，同步更新到 textarea
+        text_summary.val(html)
+    }
+    // 配置服务器端地址
+    editor.customConfig.uploadImgServer = contextPath + '/a/upload/editor'
+    //配置指定文件名
+    editor.customConfig.uploadFileName = 'food'
+    editor.customConfig.uploadImgHooks = {
+        customInsert: function (insertImg, result, editor) {
+            // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
+            // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
+            var url = result.data[0];
+            insertImg(url);
+        }
+    }
+    /*加载插件*/
+    editor.create()
+</script>
+<!--图片上传-->
+<script type="text/javascript">
+    layui.use('upload', function () {
+        var upload = layui.upload;
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#film-pic' //绑定元素
+            , url: contextPath + '/a/upload/editor' //上传接口
+            , done: function (res) {
+                //上传完毕回调
+                //将图片路径放到film实体的图片路径属性中
+                console.log(res.data);
+                $("#filmpic").val(res.data[1]);
+                //将图片路径放到img标签中
+                $("#queue_img").css("display", "block");
+                $("#queue_img").attr("src", contextPath + "/article/" + res.data[1]);
+            }
+            , error: function (res) {
+                //请求异常回调
+                layer.msg(res.data);
+            }
+        });
+    });
+</script>
+<!--异步保存-->
+<script type="text/javascript">
+    function saveuser() {
+        var data = $("#user-form").serialize();
+        $.ajax({
+            type: "post",
+            url: contextPath + "/a/users/save",
+            data: data,
+            success: function (jsonData) {
+                layer.msg('保存成功', {icon: 1}, function () {
+                    location.href = contextPath + "/a/users/list"
+            });
+            }
+        })
+    }
+</script>
+</body>
+</html>

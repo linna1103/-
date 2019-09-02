@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gem.mapper.CommentMapper">
+
+    <resultMap id="commentMap" type="com.gem.entity.Comment">
+        <id property="id" column="id"/>
+        <result property="menuText" column="menu_text"/>
+        <result property="commentTime" column="comment_time"/>
+        <result property="themefoodId" column="themefood_id"/>
+        <result property="themeuserId" column="themeuser_id"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="username" column="username" ></result>
+        <result property="themeName" column="theme_name"></result>
+    </resultMap>
+    
+    <select id="selectComment" resultMap="commentMap">
+		select menu_comment.*,menu_user.username,theme_food.theme_name from menu_comment
+          left join menu_user on menu_comment.themeuser_id = menu_user.id
+          left join theme_food on menu_comment.themefood_id = theme_food.id;
+	</select>
+
+    <select id="count" resultType="integer">
+		select count(*) as count from menu_comment
+	</select>
+
+</mapper>

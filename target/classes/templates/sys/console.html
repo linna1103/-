@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/view.css}"/>
+    <title>控制台</title>
+</head>
+<body class="layui-view-body">
+    <div class="layui-content">
+        <div class="layui-row layui-col-space20">
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>总用户数</span>
+                                </div>
+                                <div class="total" th:text="${count1}">126,560</div><!---->
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span>&nbsp;</span>
+                                <span>&nbsp;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>总菜谱数</span>
+                                </div>
+                                <div class="total" th:text="${count2}">126,560</div>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span>&nbsp;</span>
+                                <span>&nbsp;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-body chart-card">
+                        <div class="chart-header">
+                            <div class="metawrap">
+                                <div class="meta">
+                                    <span>总帖子数</span>
+                                </div>
+                                <div class="total" th:text="${count3}">126,560</div>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="contentwrap">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="chart-footer">
+                            <div class="field">
+                                <span>&nbsp;</span>
+                                <span>&nbsp;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-sm12 layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-tab layui-tab-brief">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">气温折线图</li>
+                            <!--<li>活跃度</li>-->
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <br>
+                                <div id="main" style="width: 600px;height: 400px;"></div>
+                            </div>
+                            <!--<div class="layui-tab-item">
+                                ddd
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{/assets/layui.all.js}"></script>
+    <script src="js/echarts.min.js" th:src="@{/js/echarts.min.js}" type="text/javascript"></script>
+    <script src="js/jquery-3.2.1.min.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+    <script>
+     var element = layui.element;
+    </script>
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('main'));
+        // 显示标题，图例和空的坐标轴
+        myChart.setOption({
+            title: {
+                text: '苏州未来七日气温'
+            },
+            tooltip: {},
+            legend: {
+                data: ['最高气温', '最低气温']
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value} °C'
+                }
+            },
+            series: [{
+                name: '最高气温',
+                type: 'line',
+                data: [],
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    },
+                        {
+                            type: 'min',
+                            name: '最小值'
+                        }
+                    ]
+                },
+                markLine: {
+                    data: [{
+                        type: 'average',
+                        name: '平均值'
+                    }]
+                }
+            },
+                {
+                    name: '最低气温',
+                    type: 'line',
+                    data: [],
+                    markPoint: {
+                        data: [{
+                            name: '周最低',
+                            value: -2,
+                            xAxis: 1,
+                            yAxis: -1.5
+                        }]
+                    },
+                    markLine: {
+                        data: [{
+                            type: 'average',
+                            name: '平均值'
+                        },
+                            [{
+                                symbol: 'none',
+                                x: '90%',
+                                yAxis: 'max'
+                            }, {
+                                symbol: 'circle',
+                                label: {
+                                    normal: {
+                                        position: 'start',
+                                        formatter: '最大值'
+                                    }
+                                },
+                                type: 'max',
+                                name: '最高点'
+                            }]
+                        ]
+                    }
+                }
+            ]
+        });
+
+        // 异步加载数据
+        var city = "苏州";
+        // $citycode=urlencode(city);
+        url = 'http://v.juhe.cn/weather/index?format=2&cityname=' + '苏州' + '&key=a9dea9f652bcfb74039210812ddd61c6';
+
+        $.ajax({
+            url: url,
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            data: {
+                location: city
+            },
+            success: function(wddata) {
+                var wdlist = wddata.result.future;
+                console.log(wddata);
+                var wdmin = [];
+                var wdmax = [];
+                var xqday = [];
+                for (var i = 0; i < wdlist.length; i++) {
+                    var wd = wddata.result.future[i].temperature;
+                    var xq = wddata.result.future[i].week;
+                    xqday.push(xq);
+                    var arr = wd.split("~");
+                    var min = arr[0].split("℃")[0];
+                    var max = arr[1].split("℃")[0];
+                    console.log(min);
+                    console.log(max);
+                    wdmin.push(min);
+                    wdmax.push(max);
+                }
+                console.log(wdmin);
+                console.log(wdmax);
+
+                // 填入数据
+                myChart.setOption({
+                    xAxis: {
+                        data: xqday
+                    },
+                    series: [{
+                        // 根据名字对应到相应的系列
+                        name: '最高气温',
+                        data: wdmax
+                    }, {
+                        name: '最低气温',
+                        data: wdmin
+                    }]
+                });
+            }
+        })
+    </script>
+</body>
+</html>

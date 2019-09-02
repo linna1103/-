@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "system",
+      "type": "com.gem.config.AppConfig",
+      "sourceType": "com.gem.config.AppConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "system.filepath",
+      "type": "java.lang.String",
+      "sourceType": "com.gem.config.AppConfig"
+    },
+    {
+      "name": "system.urlpath",
+      "type": "java.lang.String",
+      "sourceType": "com.gem.config.AppConfig"
+    }
+  ],
+  "hints": []
+}
